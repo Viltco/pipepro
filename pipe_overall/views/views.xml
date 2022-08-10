@@ -1,0 +1,57 @@
+<odoo>
+  <data>
+
+     <record model="ir.ui.view" id="mrp_production_form_inh">
+        <field name="name">mrp.production.form.inh</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//page[@name='miscellaneous']" position="after">
+                <page string="Produced Quantity">
+                    <field name="produced_lines">
+                        <tree editable="bottom">
+                            <field name="name"/>
+                            <field name="workcenter_id"/>
+<!--                            <field name="workcenter_machine_id"/>-->
+<!--                            <field name="employee_id"/>-->
+                            <field name="start_date"/>
+                            <field name="paused_date"/>
+                            <field name="qty"/>
+                        </tree>
+                    </field>
+                </page>
+
+<!--                <page string="Finished Unique Products">-->
+<!--                    <field name="lot_lines">-->
+<!--                        <tree editable="bottom">-->
+<!--                            <field name="name" string="Unique No"/>-->
+<!--                            <field name="lot_id" />-->
+<!--                            <field name="status" />-->
+<!--                            <field name="mrp_id" invisible="1"/>-->
+<!--                        </tree>-->
+<!--                    </field>-->
+<!--                </page>-->
+
+                <page string="Rejection Reason">
+                    <field name="reason_lines">
+                        <tree editable="bottom">
+                            <field name="name"/>
+                            <field name="workcenter_id"/>
+<!--                            <field name="workcenter_machine_id"/>-->
+<!--                            <field name="employee_id"/>-->
+                            <field name="start_date"/>
+                            <field name="paused_date"/>
+                            <field name="qty" string="Quantity"/>
+                            <field name="reason"/>
+                        </tree>
+                    </field>
+                </page>
+
+            </xpath>
+
+        </field>
+    </record>
+
+  </data>
+</odoo>

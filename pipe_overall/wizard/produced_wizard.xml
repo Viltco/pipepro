@@ -1,0 +1,87 @@
+<odoo>
+
+<!--	<record id="view_finish_lot_wizard_form" model="ir.ui.view">-->
+<!--		<field name="name">Finish Lot</field>-->
+<!--		<field name="model">finish.lot.wizard</field>-->
+<!--		<field name="arch" type="xml">-->
+<!--			<form>-->
+<!--                <group col="4">-->
+<!--                    <field name="qty" readonly="1"/>-->
+<!--                    <field name="status" required="1"/>-->
+<!--                    <field name="reason" attrs="{'invisible': [('status', '!=', 'rejected')],'required': [('status', '=', 'rejected')]}"/>-->
+<!--                </group>-->
+<!--				<footer>-->
+<!--					<button name="action_create" string="Confirm" type="object" class="btn-primary"/>-->
+<!--				</footer>-->
+<!--			</form>-->
+<!--		</field>-->
+<!--    </record>-->
+
+<!--	<record id="view_done_lot_wizard_form" model="ir.ui.view">-->
+<!--		<field name="name">Done Lot</field>-->
+<!--		<field name="model">done.lot.wizard</field>-->
+<!--		<field name="arch" type="xml">-->
+<!--			<form>-->
+<!--                <group col="4">-->
+<!--                    <field name="qty" readonly="1"/>-->
+<!--                    <field name="status" required="1"/>-->
+<!--                    <field name="reason" attrs="{'invisible': [('status', '!=', 'rejected')],'required': [('status', '=', 'rejected')]}"/>-->
+<!--                </group>-->
+<!--				<footer>-->
+<!--					<button name="action_create" string="Confirm" type="object" class="btn-primary"/>-->
+<!--				</footer>-->
+<!--			</form>-->
+<!--		</field>-->
+<!--    </record>-->
+
+<!--	<record id="view_produced_lot_wizard_form" model="ir.ui.view">-->
+<!--		<field name="name">Product Lot</field>-->
+<!--		<field name="model">produced.lot.wizard</field>-->
+<!--		<field name="arch" type="xml">-->
+<!--			<form>-->
+<!--                <group>-->
+<!--&lt;!&ndash;                    <field name="unique_lot_id" domain="[('id', 'not in', unique_lot_ids), ('mrp_id', '=', production_id)]"/>&ndash;&gt;-->
+<!--                    <field name="production_id" invisible="1"/>-->
+<!--&lt;!&ndash;                    <field name="unique_lot_ids" widget="many2many_tags" invisible="1"/>&ndash;&gt;-->
+<!--                </group>-->
+<!--				<footer>-->
+<!--					<button name="action_create" string="Confirm" type="object" class="btn-primary"/>-->
+<!--				</footer>-->
+<!--			</form>-->
+<!--		</field>-->
+<!--    </record>-->
+
+
+    <record id="view_produced_wizard_form" model="ir.ui.view">
+		<field name="name">Product Quantity</field>
+		<field name="model">produced.qty.wizard</field>
+		<field name="arch" type="xml">
+			<form>
+                <group>
+                    <field name="qty"/>
+                </group>
+				<footer>
+					<button name="action_create" string="Ok" type="object" class="btn-primary"/>
+				</footer>
+			</form>
+		</field>
+    </record>
+
+
+	<record id="view_done_wizard_form" model="ir.ui.view">
+		<field name="name">Done Quantity</field>
+		<field name="model">done.qty.wizard</field>
+		<field name="arch" type="xml">
+			<form>
+                <group col="4">
+                    <field name="qty"/>
+                    <field name="reason"/>
+                </group>
+				<footer>
+					<button name="action_create" string="Ok" type="object" class="btn-primary"/>
+				</footer>
+			</form>
+		</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_produced_qty_wizard,access.produced.qty.wizard,model_produced_qty_wizard,,1,1,1,1
+access_done_qty_wizard,access.done.qty.wizard,model_done_qty_wizard,,1,1,1,1
+access_produced_qty_line,access.produced.qty.line,model_produced_qty_line,,1,1,1,1
+access_reason_line,access.reason.line,model_reason_line,,1,1,1,1
