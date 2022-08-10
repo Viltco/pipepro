@@ -1,6 +1,21 @@
 <odoo>
   <data>
 
+      <record model="ir.ui.view" id="mrp_workcenter_form_inh">
+        <field name="name">mrp.workcenter.form.inh</field>
+        <field name="model">mrp.workcenter</field>
+        <field name="inherit_id" ref="mrp.mrp_workcenter_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='costs_hour']" position="after">
+                <field name="man_power"/>
+                <field name="machine_cost"/>
+                <field name="oh_cost" string="OH Cost"/>
+            </xpath>
+
+        </field>
+      </record>
+
      <record model="ir.ui.view" id="mrp_production_form_inh">
         <field name="name">mrp.production.form.inh</field>
         <field name="model">mrp.production</field>

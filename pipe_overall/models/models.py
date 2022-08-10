@@ -5,6 +5,19 @@ from odoo.exceptions import ValidationError, UserError
 from datetime import datetime
 
 
+class MrpWorkcenterInh(models.Model):
+    _inherit = 'mrp.workcenter'
+
+    man_power = fields.Float()
+    machine_cost = fields.Float()
+    oh_cost = fields.Float()
+
+    @api.onchange('man_power', 'machine_cost', 'oh_cost')
+    def onchange_man(self):
+        self.costs_hour = self.oh_cost + self.man_power + self.machine_cost
+
+
+
 class MrpInh(models.Model):
     _inherit = 'mrp.production'
 
