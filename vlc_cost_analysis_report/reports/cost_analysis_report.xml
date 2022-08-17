@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <report id="cost_analysis_report"
+            model="mrp.production"
+            string="Cost Analysis Report"
+            report_type="qweb-pdf"
+            name="vlc_cost_analysis_report.cost_analysis_template"
+            file="vlc_cost_analysis_report.cost_analysis_template"
+    />
+
+</odoo>

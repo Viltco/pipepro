@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <template id="cost_analysis_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-foreach="docs" t-as="doc">
+                    <div class="page">
+                        <div class="text-center">
+                            <h3>
+                                <strong>Cost Analysis</strong>
+                            </h3>
+                        </div>
+                        <br/>
+                        <div>
+                            <div class="row mt32 mb32">
+                                <div class="col-6">
+                                    <span t-field="doc.product_id.name"/>, <span t-field="doc.product_qty" t-options="{&quot;widget&quot;: &quot;float&quot;, &quot;precision&quot;: 2}"/>, <span>from 1 manufacturing order(s).</span><br/><br/>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="row mt32 mb32">
+                                <div class="col-6">
+                                    <h4>Cost Structure</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <table class="table table-bordered">
+                            <thead class="text-center" style="background-color:#eeeeee; font-size:14px; font-weight:600;">
+                                <th>Code</th>
+                                <th>Component</th>
+                                <th>Quantity</th>
+                                <th>Unit Cost</th>
+                                <th>Total Cost</th>
+                            </thead>
+                            <tbody class="text-center" style="font-size:12px;">
+                                <t t-set="total_cost" t-value="0.0"/>
+                                <tr t-foreach="doc.move_raw_ids" t-as="line">
+                                    <td>
+                                        <span t-esc="line.product_id.barcode"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.product_id.name"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.quantity_done" t-options="{&quot;widget&quot;: &quot;float&quot;, &quot;precision&quot;: 4}"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.product_id.standard_price" t-options="{&quot;widget&quot;: &quot;float&quot;, &quot;precision&quot;: 4}"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="(line.quantity_done) * (line.product_id.standard_price)" t-options="{&quot;widget&quot;: &quot;float&quot;, &quot;precision&quot;: 2}"/>
+                                        <t t-set="total_cost" t-value="total_cost + ((line.quantity_done) * (line.product_id.standard_price))"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3"></td>
+                                    <td style="font-weight:bold;">Total Cost of Components</td>
+                                    <td class="text-center" style="font-weight:bold;"><span t-esc="total_cost" t-options="{&quot;widget&quot;: &quot;float&quot;, &quot;precision&quot;: 2}"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br/>
+
+                        <div>
+                            <div class="row mt32 mb32">
+                                <div class="col-6">
+                                    <h4>Cost of Operations</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <table class="table table-bordered">
+                            <thead class="text-center" style="background-color:#eeeeee; font-size:14px; font-weight:600;">
+                                <th>Operator</th>
+                                <th>Operations</th>
+                                <th>Work Center</th>
+                                <th>Breakouts</th>
+                                <th>Breakout Costs</th>
+                                <th>Working Time</th>
+                                <th>Cost / Hour</th>
+                                <th>Breakout Total Cost</th>
+                                <th>Total Cost</th>
+                            </thead>
+                            <tbody class="text-center" style="font-size:12px;">
+                                <t t-set="total_opr_cost" t-value="0.0"/>
+                                <tr t-foreach="doc.workorder_ids" t-as="opr_line">
+                                    <td>
+                                        <span t-esc="doc.user_id.name"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="opr_line.name"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="opr_line.workcenter_id.name"/>
+                                    </td>
+                                    <td>
+<!--                                        <span t-field="opr_line.workcenter_id.name"/>-->
+                                    </td>
+                                    <td>
+<!--                                        <span t-field="opr_line.workcenter_id.name"/>-->
+                                    </td>
+                                    <td>
+                                        <span t-esc="(opr_line.duration) / 60" t-options="{&quot;widget&quot;: &quot;float&quot;, &quot;precision&quot;: 4}"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="opr_line.workcenter_id.costs_hour"/>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        <span t-esc="((opr_line.duration) / 60) * (opr_line.workcenter_id.costs_hour)" t-options="{&quot;widget&quot;: &quot;float&quot;, &quot;precision&quot;: 2}"/>
+                                        <t t-set="total_opr_cost" t-value="total_opr_cost + (((opr_line.duration) / 60) * (opr_line.workcenter_id.costs_hour))" />
+                                    </td>
+
+                                <tr >
+                                    <td colspan="3"></td>
+                                    <td>
+                                        <span>Man Power</span>
+                                    </td>
+                                    <td>
+                                        <span t-field="opr_line.workcenter_id.man_power"/>
+                                    </td>
+                                    <td colspan="2"></td>
+                                    <td>
+                                        <span t-esc="(((opr_line.workcenter_id.man_power) / opr_line.workcenter_id.costs_hour)) * (((opr_line.duration) / 60) * (opr_line.workcenter_id.costs_hour))" t-options="{&quot;widget&quot;: &quot;float&quot;, &quot;precision&quot;: 2}"/>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3"></td>
+                                    <td>
+                                        <span>Machine</span>
+                                    </td>
+                                    <td>
+                                        <span t-field="opr_line.workcenter_id.machine_cost"/>
+                                    </td>
+                                    <td colspan="2"></td>
+                                    <td>
+                                        <span t-esc="(((opr_line.workcenter_id.machine_cost) / opr_line.workcenter_id.costs_hour)) * (((opr_line.duration) / 60) * (opr_line.workcenter_id.costs_hour))" t-options="{&quot;widget&quot;: &quot;float&quot;, &quot;precision&quot;: 2}"/>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3"></td>
+                                    <td>
+                                        <span>OH</span>
+                                    </td>
+                                    <td>
+                                        <span t-field="opr_line.workcenter_id.oh_cost"/>
+                                    </td>
+                                    <td colspan="2"></td>
+                                    <td>
+                                        <span t-esc="(((opr_line.workcenter_id.oh_cost) / opr_line.workcenter_id.costs_hour)) * (((opr_line.duration) / 60) * (opr_line.workcenter_id.costs_hour))" t-options="{&quot;widget&quot;: &quot;float&quot;, &quot;precision&quot;: 2}"/>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                </tr>
+                                <tr>
+                                    <td colspan="7"></td>
+                                    <td style="font-weight:bold;">Total Cost of Operations</td>
+                                    <td class="text-center" style="font-weight:bold;"><span t-esc="total_opr_cost" t-options="{&quot;widget&quot;: &quot;float&quot;, &quot;precision&quot;: 2}"/></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="7"></td>
+                                    <td style="font-weight:bold;">Cost of <span t-field="doc.product_qty" t-options="{&quot;widget&quot;: &quot;float&quot;, &quot;precision&quot;: 2}"/>.</td>
+                                    <td class="text-center" style="font-weight:bold;"><span t-esc="total_opr_cost" t-options="{&quot;widget&quot;: &quot;float&quot;, &quot;precision&quot;: 2}"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>
