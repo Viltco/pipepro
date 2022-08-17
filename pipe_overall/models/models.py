@@ -27,6 +27,11 @@ class MrpInh(models.Model):
     reason_lines = fields.One2many('reason.line', 'mrp_id')
     entry_lines = fields.One2many('entry.line', 'mrp_id')
 
+    def button_mark_done(self):
+        self.compute_entry_lines()
+        rec = super(MrpInh, self).button_mark_done()
+        return rec
+
     def compute_entry_lines(self):
         for record in self:
             if record:
@@ -57,6 +62,7 @@ class MrpInh(models.Model):
                         'oh_cost': 0
                     })]
                 })
+        self.create_draft_entry()
 
     def create_draft_entry(self):
         line_ids = []
@@ -67,51 +73,55 @@ class MrpInh(models.Model):
         for line in self.entry_lines:
             move_dict = {
                 'ref': self.name,
-                # 'journal_id': self.lease_journal_id.id,
-                # 'lease_bill_id': self.id,
                 'partner_id': self.user_id.partner_id.id,
                 'date': datetime.today(),
                 'state': 'draft',
             }
+            one_debit_account = self.env['account.account'].search([('name', '=', 'Man Power Standard Cost')], limit=1)
             one_debit_line = (0, 0, {
-                'name': self.name,
-                'debit': abs(line.int_part),
+                'name': 'Man Power Standard Cost',
+                'debit': line.mn_power,
                 'credit': 0.0,
-                'partner_id': self.partner_id.id,
-                'account_id': self.interest_expense_id.id,
+                'partner_id': self.user_id.partner_id.id,
+                'account_id': one_debit_account.id,
             })
             line_ids.append(one_debit_line)
             one_debit_sum += one_debit_line[2]['debit'] - one_debit_line[2]['credit']
+            two_debit_account = self.env['account.account'].search([('name', '=', 'Machine Standard Cost')], limit=1)
             two_debit_line = (0, 0, {
-                'name': self.name,
-                'debit': abs(line.prin_part),
+                'name': 'Machine Standard Cost',
+                'debit': line.machine_cost,
                 'credit': 0.0,
-                'partner_id': self.partner_id.id,
-                'account_id': self.lease_long_term_id.id,
+                'partner_id': self.user_id.partner_id.id,
+                'account_id': two_debit_account.id,
             })
             line_ids.append(two_debit_line)
             two_debit_sum += two_debit_line[2]['debit'] - two_debit_line[2]['credit']
+            three_debit_account = self.env['account.account'].search([('name', '=', 'OH Standard Cost')], limit=1)
             three_debit_line = (0, 0, {
-                'name': self.name,
-                'debit': abs(line.prin_part),
+                'name': 'OH Cost',
+                'debit': line.oh_cost,
                 'credit': 0.0,
-                'partner_id': self.partner_id.id,
-                'account_id': self.lease_long_term_id.id,
+                'partner_id': self.user_id.partner_id.id,
+                'account_id': three_debit_account.id,
             })
             line_ids.append(three_debit_line)
             three_debit_sum += three_debit_line[2]['debit'] - three_debit_line[2]['credit']
+            credit_account = self.env['account.account'].search([('name', '=', 'Work In Process')], limit=1)
             credit_line = (0, 0, {
-                'name': self.name,
+                'name': 'Work In Process',
                 'debit': 0.0,
-                'partner_id': self.partner_id.id,
-                'credit': abs(line.prin_part + line.int_part),
-                'account_id': self.lease_current_id.id,
+                'partner_id': self.user_id.partner_id.id,
+                'credit': line.total_cost,
+                'account_id': credit_account.id,
             })
             line_ids.append(credit_line)
             credit_sum += credit_line[2]['credit'] - credit_line[2]['debit']
             move_dict['line_ids'] = line_ids
             move = self.env['account.move'].create(move_dict)
             line_ids = []
+            break
+            print('JV Created')
 
 
 

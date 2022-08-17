@@ -23,7 +23,7 @@
         <field name="arch" type="xml">
 
             <xpath expr="//button[@name='button_unbuild']" position="after">
-                <button string="Test" type="object" name="compute_entry_lines"/>
+                <button string="Test" type="object" name="compute_entry_lines" invisible="1"/>
             </xpath>
 
             <xpath expr="//page[@name='miscellaneous']" position="after">
