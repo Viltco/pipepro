@@ -26,7 +26,7 @@
                                 </div>
                             </div>
                         </div>
-                        <table class="table table-bordered">
+                        <table class="table table-sm">
                             <thead class="text-center" style="background-color:#eeeeee; font-size:14px; font-weight:600;">
                                 <th>Code</th>
                                 <th>Component</th>
@@ -70,7 +70,8 @@
                                 </div>
                             </div>
                         </div>
-                        <table class="table table-bordered">
+<!--                        <table class="table table-bordered">-->
+                        <table class="table table-sm">
                             <thead class="text-center" style="background-color:#eeeeee; font-size:14px; font-weight:600;">
                                 <th>Operator</th>
                                 <th>Operations</th>
@@ -112,7 +113,6 @@
                                         <span t-esc="((opr_line.duration) / 60) * (opr_line.workcenter_id.costs_hour)" t-options="{&quot;widget&quot;: &quot;float&quot;, &quot;precision&quot;: 2}"/>
                                         <t t-set="total_opr_cost" t-value="total_opr_cost + (((opr_line.duration) / 60) * (opr_line.workcenter_id.costs_hour))" />
                                     </td>
-
                                 <tr >
                                     <td colspan="3"></td>
                                     <td>
