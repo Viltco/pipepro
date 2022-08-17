@@ -25,6 +25,94 @@ class MrpInh(models.Model):
     produced_lines = fields.One2many('produced.qty.line', 'mrp_id')
     # lot_lines = fields.One2many('unique.lot', 'mrp_id')
     reason_lines = fields.One2many('reason.line', 'mrp_id')
+    entry_lines = fields.One2many('entry.line', 'mrp_id')
+
+    def compute_entry_lines(self):
+        for record in self:
+            if record:
+                mn_pwr = 0
+                mchn_cst = 0
+                oh_cst = 0
+                tot_cst = 0
+                for workline in record.workorder_ids:
+                    mn_pwr = mn_pwr + workline.workcenter_id.man_power
+                    mchn_cst = mchn_cst + workline.workcenter_id.machine_cost
+                    oh_cst = oh_cst + workline.workcenter_id.oh_cost
+                tot_cst = mn_pwr + mchn_cst + oh_cst
+                record.update({
+                    'entry_lines': [(0, 0, {
+                        'mrp_id': record.id,
+                        'mn_power': mn_pwr,
+                        'machine_cost': mchn_cst,
+                        'oh_cost': oh_cst,
+                        'total_cost': tot_cst
+                    })]
+                })
+            else:
+                record.update({
+                    'entry_lines': [(0, 0, {
+                        'mrp_id': record.id,
+                        'mn_power': 0,
+                        'machine_cost': 0,
+                        'oh_cost': 0
+                    })]
+                })
+
+    def create_draft_entry(self):
+        line_ids = []
+        one_debit_sum = 0.0
+        two_debit_sum = 0.0
+        three_debit_sum = 0.0
+        credit_sum = 0.0
+        for line in self.entry_lines:
+            move_dict = {
+                'ref': self.name,
+                # 'journal_id': self.lease_journal_id.id,
+                # 'lease_bill_id': self.id,
+                'partner_id': self.user_id.partner_id.id,
+                'date': datetime.today(),
+                'state': 'draft',
+            }
+            one_debit_line = (0, 0, {
+                'name': self.name,
+                'debit': abs(line.int_part),
+                'credit': 0.0,
+                'partner_id': self.partner_id.id,
+                'account_id': self.interest_expense_id.id,
+            })
+            line_ids.append(one_debit_line)
+            one_debit_sum += one_debit_line[2]['debit'] - one_debit_line[2]['credit']
+            two_debit_line = (0, 0, {
+                'name': self.name,
+                'debit': abs(line.prin_part),
+                'credit': 0.0,
+                'partner_id': self.partner_id.id,
+                'account_id': self.lease_long_term_id.id,
+            })
+            line_ids.append(two_debit_line)
+            two_debit_sum += two_debit_line[2]['debit'] - two_debit_line[2]['credit']
+            three_debit_line = (0, 0, {
+                'name': self.name,
+                'debit': abs(line.prin_part),
+                'credit': 0.0,
+                'partner_id': self.partner_id.id,
+                'account_id': self.lease_long_term_id.id,
+            })
+            line_ids.append(three_debit_line)
+            three_debit_sum += three_debit_line[2]['debit'] - three_debit_line[2]['credit']
+            credit_line = (0, 0, {
+                'name': self.name,
+                'debit': 0.0,
+                'partner_id': self.partner_id.id,
+                'credit': abs(line.prin_part + line.int_part),
+                'account_id': self.lease_current_id.id,
+            })
+            line_ids.append(credit_line)
+            credit_sum += credit_line[2]['credit'] - credit_line[2]['debit']
+            move_dict['line_ids'] = line_ids
+            move = self.env['account.move'].create(move_dict)
+            line_ids = []
+
 
 
 class ProducedQtyLine(models.Model):
@@ -162,3 +250,16 @@ class MrpOrderInh(models.Model):
         #         'res_model': 'done.lot.wizard',
         #         'view_mode': 'form',
         #     }
+
+
+class EntryLine(models.Model):
+    _name = 'entry.line'
+
+    mrp_id = fields.Many2one('mrp.production')
+    # workcenter_id = fields.Many2one('mrp.workcenter')
+
+    mn_power = fields.Float('Man Power')
+    machine_cost = fields.Float('Machine')
+    oh_cost = fields.Float('OH')
+    total_cost = fields.Float('Total')
+

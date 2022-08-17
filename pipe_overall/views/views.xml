@@ -22,6 +22,10 @@
         <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
         <field name="arch" type="xml">
 
+            <xpath expr="//button[@name='button_unbuild']" position="after">
+                <button string="Test" type="object" name="compute_entry_lines"/>
+            </xpath>
+
             <xpath expr="//page[@name='miscellaneous']" position="after">
                 <page string="Produced Quantity">
                     <field name="produced_lines">
@@ -59,6 +63,18 @@
                             <field name="paused_date"/>
                             <field name="qty" string="Quantity"/>
                             <field name="reason"/>
+                        </tree>
+                    </field>
+                </page>
+
+                <page string="Entry Data">
+                    <field name="entry_lines" readonly="1">
+                        <tree editable="bottom">
+                            <field name="mrp_id" invisible="1"/>
+                            <field name="mn_power"/>
+                            <field name="machine_cost"/>
+                            <field name="oh_cost"/>
+                            <field name="total_cost"/>
                         </tree>
                     </field>
                 </page>

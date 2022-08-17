@@ -3,3 +3,4 @@ access_produced_qty_wizard,access.produced.qty.wizard,model_produced_qty_wizard,
 access_done_qty_wizard,access.done.qty.wizard,model_done_qty_wizard,,1,1,1,1
 access_produced_qty_line,access.produced.qty.line,model_produced_qty_line,,1,1,1,1
 access_reason_line,access.reason.line,model_reason_line,,1,1,1,1
+access_entry_line,access.entry.line,model_entry_line,,1,1,1,1
